@@ -4,8 +4,8 @@ import React from 'react'
 
 const App = () => {
   return (
-    <Box p={2} bgcolor='primary.main' color='primary.contrastText'>
-      <Typography variant="h3" color="initial">Vite + React + MUI + Redux  </Typography>
+    <Box p={2} >
+      <Typography variant="h1">Hello World</Typography>
     </Box>
   )
 }
