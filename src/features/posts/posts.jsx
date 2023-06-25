@@ -8,13 +8,10 @@ import {useSelector , useDispatch} from 'react-redux';
 const PostList = () => {
     const posts = useSelector(selectAllPosts);
     const RenderPosts = posts.map (post => (
-        <Card key={post.id} sx={{ margin: 2 }}>
+        <Card key={post.id} sx={{ margin: 2 , border: "1px solid #ffff", ":hover":{border: "1px solid #ccc"}}}>
+            <CardHeader title={post.title} subheader={post.date}/>
             <CardContent>
-            <Typography variant="h5" color="text.secondary">{post.title}</Typography>
-            <Typography variant="body1" color="text.secondary">{post.content}</Typography>
-            
-             { post.date &&  <Typography variant="body1" color="text.secondary"><b>Post On</b> {post.date}  </Typography>}
-            
+            <Typography variant="body1" color="text.secondary" >{post.content}</Typography>
             </CardContent>
         </Card>
     ))

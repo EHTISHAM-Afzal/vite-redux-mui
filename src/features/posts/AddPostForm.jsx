@@ -10,13 +10,9 @@ const AddPostForm = () => {
   const [content, setContent] = useState("");
 
   const onSavePostClicked = () => {
-    if (title || content) {
+    if (title && content) {
       dispatch(
-        addPost({ 
-          id: nanoid(), 
-          title, 
-          content, 
-          date: new Date().toString()}));
+        addPost(title, content));
     }
     setTitle("");
     setContent("");
