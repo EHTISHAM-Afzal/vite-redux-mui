@@ -1,7 +1,6 @@
 import { Box, Input, Typography, Button } from "@mui/material";
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-import { nanoid } from "@reduxjs/toolkit";
 import { addPost } from "./postSclice";
 
 const AddPostForm = () => {
