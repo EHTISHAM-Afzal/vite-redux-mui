@@ -7,6 +7,9 @@ import { Provider } from 'react-redux'
 import CssBaseline from '@mui/material/CssBaseline';
 import { ThemeProvider } from '@mui/material/styles';
 import theme from './theme.jsx'
+import { fetchUsers } from './features/Users/usersSlice.jsx'
+
+store.dispatch(fetchUsers());
 
 
 
