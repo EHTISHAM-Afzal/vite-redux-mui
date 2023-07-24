@@ -46,7 +46,7 @@ const PostList = () => {
   return (
     <Stack
       direction="column"
-      width={{ xs: "90vw", sm: "80vw", md: "60vw", lg: "40vw" }}
+      width={{ maxWidth : "100%" }}
       spacing={2}
     >
       <Typography variant="h4">Posts</Typography>

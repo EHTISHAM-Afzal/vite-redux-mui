@@ -1,26 +1,33 @@
-import { Box, Typography, Button, AppBar, Toolbar, Step, StepLabel } from '@mui/material'
-import React from 'react'
-import PostList from './features/posts/postsList'
-import AddPostForm from './features/posts/AddPostForm'
+import React from "react";
+import PostList from "./features/posts/postsList";
+import AddPostForm from "./features/posts/AddPostForm";
 // now import the react router dom
-import { RouterProvider , createBrowserRouter, createRoutesFromElements, Route } from 'react-router-dom'
-import NaveBar from './nav'
+import {
+  RouterProvider,
+  createBrowserRouter,
+  createRoutesFromElements,
+  Route,
+} from "react-router-dom";
+import NaveBar from "./nav";
+import SinglePostPage from "./features/posts/SinglePostPage";
+import EditPostForm from "./features/posts/EditPostForm";
 
-
-const routes = createBrowserRouter(createRoutesFromElements(
-  <>
-  <Route path="/" element={<NaveBar />}>
-  <Route index element={<><AddPostForm /> <PostList /></>} />
-  {/* <Route path="create" element={<AddPostForm />} /> */}
-  </Route>
-  <Route path="*" element={<h1>404 Not Found</h1>}/>
-  </>
-))
+const routes = createBrowserRouter(
+  createRoutesFromElements(
+    <>
+      <Route path="/" element={<NaveBar />}>
+        <Route index element={<PostList />} />
+        <Route path="post" element={<AddPostForm />} />
+        <Route path="post/:postId" element={<SinglePostPage />} />
+        <Route path="post/edit/:postId" element={<EditPostForm />} />
+      </Route>
+      <Route path="*" element={<h1>404 Not Found</h1>} />
+    </>
+  )
+);
 
 const App = () => {
-  return (
-    <RouterProvider router={routes} />
-  )
-}
+  return <RouterProvider router={routes} />;
+};
 
-export default App
+export default App;

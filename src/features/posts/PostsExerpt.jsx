@@ -9,6 +9,7 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
+import { Link } from "react-router-dom";
 
 const PostsExcerpt = ({ post }) => {
   return (
@@ -23,9 +24,10 @@ const PostsExcerpt = ({ post }) => {
       <CardHeader title={post.title} />
       <CardContent>
         <Typography variant="title" color="text.secondary">
-          {post.body.substring(0, 100)}
+          {post.body.substring(0, 100)} ...
         </Typography>
         <Box variant="footer" color="text.secondary" sx={{ mt: 2 }}>
+        <Link className=" font-semibold " to={`post/${post.id}`}>View Post </Link>
           <PostAuthor userId={post.userId} />
           <TimeAgo timestamp={post.date} />
         </Box>
