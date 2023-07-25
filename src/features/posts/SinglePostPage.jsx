@@ -1,12 +1,10 @@
 import { useSelector } from 'react-redux'
 
-import PostAuthor from "./PostAuthor";
 import TimeAgo from "./TimeAgo";
 import ReactionButtons from "./ReactionButtons";
 
 import { useParams } from 'react-router-dom';
 import { Link } from 'react-router-dom';
-import { selectPostById } from './postSclice';
 import {
     Box,
     Card,
@@ -15,6 +13,8 @@ import {
     Stack,
     Typography,
   } from "@mui/material";
+import PostAuthor from './postAuthor';
+import { selectPostById } from './postSclice';
 
 const SinglePostPage = () => {
     const {postId}  = useParams()

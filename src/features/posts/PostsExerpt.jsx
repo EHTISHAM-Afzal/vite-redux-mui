@@ -1,17 +1,15 @@
 import PostAuthor from "./postAuthor";
 import TimeAgo from "./TimeAgo";
 import ReactionButtons from "./ReactionButtons";
-import {
-  Box,
-  Card,
-  CardContent,
-  CardHeader,
-  Stack,
-  Typography,
-} from "@mui/material";
+import { Box, Card, CardContent, CardHeader, Stack, Typography,} from "@mui/material";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { selectPostById, } from "./postSclice";
 
-const PostsExcerpt = ({ post }) => {
+const PostsExcerpt = ({postId}) => {
+  
+  const post = useSelector(state => selectPostById(state, postId))
+
   return (
     <Card
       key={post.id}

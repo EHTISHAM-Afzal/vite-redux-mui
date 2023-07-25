@@ -1,47 +1,25 @@
 import {
-  Box,
-  Card,
-  CardContent,
-  CardHeader,
   Stack,
   Typography,
 } from "@mui/material";
-import {
-  selectAllPosts,
-  getPostsStatus,
-  getPostsError,
-  fetchPosts,
-} from "./postSclice";
-import React, { Suspense, useMemo } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { useEffect , } from "react";
+import { getPostsStatus, getPostsError,  selectPostIds } from "./postSclice";
+import { useSelector,  } from "react-redux";
 import PostsExcerpt from "./PostsExerpt";
-
+import Skeletons from "../../components/skeleton";
 const PostList = () => {
-  const dispatch = useDispatch();
 
-  const posts = useSelector(selectAllPosts);
+  const orderedPostIds = useSelector(selectPostIds)
   const postsStatus = useSelector(getPostsStatus);
-  const postsError = useSelector(getPostsError);
+  const error = useSelector(getPostsError);
 
-
-  useEffect(() => {
-    if(posts.length === 0 && postsStatus === "idle") {
-      dispatch(fetchPosts());
-    }
-  }, [posts.length, dispatch]);
-  
 
   let content;
   if (postsStatus === "loading") {
-    content = <Typography>Loading...</Typography>;
+    content = <Skeletons/>;
   } else if (postsStatus === "succeeded") {
-    const orderedPosts = posts.slice().sort((a, b) => b.date.localeCompare(a.date));
-    content = orderedPosts.map((post) => (
-      <PostsExcerpt key={post.id} post={post} />
-      ));
+    content = orderedPostIds.map(postId => <PostsExcerpt key={postId} postId={postId} />)
     } else if (postsStatus === "failed") {
-      content = <Typography>{postsError}</Typography>;
+      content = <Typography>{error}</Typography>;
     }
   return (
     <Stack

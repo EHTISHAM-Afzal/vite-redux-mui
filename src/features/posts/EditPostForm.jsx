@@ -11,7 +11,7 @@ import {
   InputLabel,
   MenuItem,
   Select,
-  Card,
+  Card, FormControl, FormLabel, FormHelperText,
 } from "@mui/material";
 
 const EditPostForm = () => {
@@ -92,7 +92,12 @@ const EditPostForm = () => {
   };
 
   return (
-    <Card sx={{ p: 2, mt: 2, border: "1px solid #ccc", borderRadius: 2  , maxWidth: "100%" , width: "100%" }}>
+    <Card
+      variant="outlined"
+      component="form"
+      autoComplete="off"
+      sx={{ p: 2, mt: 2, borderRadius: 2, maxWidth: "100%", width: "100%",}}
+    >
       <Typography variant="title" color="initial">
         Add Post
       </Typography>
@@ -104,19 +109,23 @@ const EditPostForm = () => {
         fullWidth
         sx={{ mt: 2 }}
       />
-      <InputLabel id="selectUser" sx={{ mt: 2 }}>
+      <FormControl variant="filled" fullWidth sx={{ mt: 2 }}>
+        <InputLabel id="SelectUser" >
         SelectUser
       </InputLabel>
       <Select
-        labelId="selectUser"
+        labelId="SelectUser"
         fullWidth
-        id="selectUser"
+        id="SelectUser"
         value={userId}
         onChange={onAuthorChanged}
-        label="selectUser"
+        label="SelectUser"
       >
         {usersOptions}
       </Select>
+        <FormHelperText>Select User to post on it's profile page</FormHelperText>
+      </FormControl>
+      
       <Input
         value={content}
         onChange={onContentChanged}
@@ -127,12 +136,12 @@ const EditPostForm = () => {
         rows={4}
         sx={{ mt: 2 }}
       />
-      <Box sx={{ display: "flex", justifyContent: "flex-end" , my: 2 }}>
-        <Button variant="contained" onClick={onSavePostClicked}>
+      <Box sx={{ display: "flex", justifyContent: "flex-end", my: 2 }}>
+        <Button variant="outlined" onClick={onSavePostClicked}>
           Update Post
         </Button>
         <Button
-          variant="contained"
+          variant="outlined"
           type="button"
           sx={{ mx: 1 }}
           color="error"

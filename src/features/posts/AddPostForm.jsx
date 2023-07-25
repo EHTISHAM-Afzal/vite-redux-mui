@@ -1,4 +1,4 @@
-import { Box, Input, Typography, Button, TextField, MenuItem , InputLabel , Select} from "@mui/material";
+import { Box, Input, Typography, Button, TextField, MenuItem , FormControl, FormHelperText, InputLabel , Select} from "@mui/material";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -61,18 +61,22 @@ const AddPostForm = () => {
         fullWidth
         sx={{ mt: 2 }}
       />
-       <InputLabel id="selectUser" sx={{ mt: 2 }}>SelectUser</InputLabel>
-        <Select
-          labelId="selectUser"
-          fullWidth
-          id="selectUser"
-          value={userId}
-          onChange={onAuthorChanged}
-          label="selectUser"
-          
-        >
-          {usersOptions}
-        </Select>
+      <FormControl variant="filled" fullWidth sx={{ mt: 2 }}>
+        <InputLabel id="SelectUser" >
+        SelectUser
+      </InputLabel>
+      <Select
+        labelId="SelectUser"
+        fullWidth
+        id="SelectUser"
+        value={userId}
+        onChange={onAuthorChanged}
+        label="SelectUser"
+      >
+        {usersOptions}
+      </Select>
+        <FormHelperText>Select User to post on it's profile page</FormHelperText>
+      </FormControl>
       <Input
         value={content}
         onChange={onContentChanged}
@@ -83,7 +87,7 @@ const AddPostForm = () => {
         rows={4}
         sx={{ mt: 2 }}
       />
-      <Button variant="contained" onClick={onSavePostClicked} sx={{ mt: 2 }}>
+      <Button variant="outlined"  disabled={!canSave} onClick={onSavePostClicked} sx={{ mt: 2 , alignSelf: "self-end" }}>
         Add Post
       </Button>
     </Box>
