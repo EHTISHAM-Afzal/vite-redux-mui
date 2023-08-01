@@ -7,6 +7,6 @@ const PostAuthor = ({ userId }) => {
 
     const author = users.find(user => user.id === userId);
 
-    return <span>by {author ? <Link to={`/user/${author.id}`}>{author.name}</Link> : 'Unknown author'}</span>
+    return <span>by {author ? <Link to={`/user/${userId}`}>{author.name}</Link> : 'Unknown author'}</span>
 }
 export default PostAuthor

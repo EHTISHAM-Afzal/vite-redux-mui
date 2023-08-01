@@ -8,9 +8,9 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { ThemeProvider } from '@mui/material/styles';
 import theme from './theme.jsx'
 import { fetchUsers } from './features/Users/usersSlice.jsx'
-import { fetchPosts } from './features/posts/postSclice.jsx'
+import { extendedApiSlice } from './features/posts/postSclice.jsx'
 
-store.dispatch(fetchPosts());
+store.dispatch(extendedApiSlice.endpoints.getPosts.initiate());
 store.dispatch(fetchUsers());
 
 

@@ -1,19 +1,27 @@
-import { Box, Input, Typography, Button, TextField, MenuItem , FormControl, FormHelperText, InputLabel , Select} from "@mui/material";
+import {
+  Box,
+  Input,
+  Typography,
+  Button,
+  MenuItem,
+  FormControl,
+  FormHelperText,
+  InputLabel,
+  Select,
+} from "@mui/material";
 import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-
+import { useSelector } from "react-redux";
 import { selectAllUsers } from "../Users/usersSlice";
-import { addNewPost } from "./postSclice";
+import { useAddNewPostMutation } from "./postSclice";
 import { useNavigate } from "react-router-dom";
 
 const AddPostForm = () => {
-  const dispatch = useDispatch();
+  const [addNewPost, { isloading }] = useAddNewPostMutation();
   const navigate = useNavigate();
 
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [userId, setUserId] = useState("");
-  const [addRequestStatus, setAddRequestStatus] = useState("idle");
 
   const users = useSelector(selectAllUsers);
 
@@ -21,14 +29,12 @@ const AddPostForm = () => {
   const onContentChanged = (e) => setContent(e.target.value);
   const onAuthorChanged = (e) => setUserId(e.target.value);
 
-  const canSave =
-    [title, content, userId].every(Boolean) && addRequestStatus === "idle";
+  const canSave = [title, content, userId].every(Boolean) && !isloading;
 
-  const onSavePostClicked = () => {
+  const onSavePostClicked = async () => {
     if (canSave) {
       try {
-        setAddRequestStatus("pending");
-        dispatch(addNewPost({ title, body: content, userId })).unwrap();
+        await addNewPost({ title, body: content, userId }).unwrap();
 
         setTitle("");
         setContent("");
@@ -36,8 +42,6 @@ const AddPostForm = () => {
         navigate("/");
       } catch (err) {
         console.error("Failed to save the post", err);
-      } finally {
-        setAddRequestStatus("idle");
       }
     }
   };
@@ -62,20 +66,20 @@ const AddPostForm = () => {
         sx={{ mt: 2 }}
       />
       <FormControl variant="filled" fullWidth sx={{ mt: 2 }}>
-        <InputLabel id="SelectUser" >
-        SelectUser
-      </InputLabel>
-      <Select
-        labelId="SelectUser"
-        fullWidth
-        id="SelectUser"
-        value={userId}
-        onChange={onAuthorChanged}
-        label="SelectUser"
-      >
-        {usersOptions}
-      </Select>
-        <FormHelperText>Select User to post on it's profile page</FormHelperText>
+        <InputLabel id="SelectUser">SelectUser</InputLabel>
+        <Select
+          labelId="SelectUser"
+          fullWidth
+          id="SelectUser"
+          value={userId}
+          onChange={onAuthorChanged}
+          label="SelectUser"
+        >
+          {usersOptions}
+        </Select>
+        <FormHelperText>
+          Select User to post on it's profile page
+        </FormHelperText>
       </FormControl>
       <Input
         value={content}
@@ -87,7 +91,12 @@ const AddPostForm = () => {
         rows={4}
         sx={{ mt: 2 }}
       />
-      <Button variant="outlined"  disabled={!canSave} onClick={onSavePostClicked} sx={{ mt: 2 , alignSelf: "self-end" }}>
+      <Button
+        variant="outlined"
+        disabled={!canSave}
+        onClick={onSavePostClicked}
+        sx={{ mt: 2, alignSelf: "self-end" }}
+      >
         Add Post
       </Button>
     </Box>
