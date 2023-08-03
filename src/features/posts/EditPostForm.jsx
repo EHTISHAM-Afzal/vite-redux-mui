@@ -1,8 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { selectPostById, useUpdatePostMutation , useDeletePostMutation } from "./postSclice";
+import {
+  useGetPostsQuery,
+  useUpdatePostMutation,
+  useDeletePostMutation,
+} from "./postSclice";
 import { useParams, useNavigate } from "react-router-dom";
-import { selectAllUsers } from "../Users/usersSlice";
+import { useGetUsersQuery } from "../Users/usersSlice";
 import {
   Box,
   Input,
@@ -11,23 +15,48 @@ import {
   InputLabel,
   MenuItem,
   Select,
-  Card, FormControl, FormLabel, FormHelperText,
+  Card,
+  FormControl,
+  FormLabel,
+  FormHelperText,
+  ListItem,
 } from "@mui/material";
 
 const EditPostForm = () => {
   const { postId } = useParams();
   const navigate = useNavigate();
 
-  const [updatePost, { isLoading}] = useUpdatePostMutation();
+  const [updatePost, { isLoading }] = useUpdatePostMutation();
   const [deletePost] = useDeletePostMutation();
 
-  const post = useSelector((state) => selectPostById(state, Number(postId)));
-  const users = useSelector(selectAllUsers);
+  const {
+    post,
+    isLoading: isLoadingPosts,
+    isSuccess,
+  } = useGetPostsQuery("getPosts", {
+    selectFromResult: ({ data, isLoading, isSuccess }) => ({
+      post: data?.entities[postId],
+      isLoading,
+      isSuccess,
+    }),
+  });
 
-  const [title, setTitle] = useState(post?.title);
-  const [content, setContent] = useState(post?.body);
-  const [userId, setUserId] = useState(post?.userId);
+  const { data: users, isSuccess: isSuccessUsers } =
+    useGetUsersQuery("getUsers");
 
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
+  const [userId, setUserId] = useState("");
+
+  useEffect(() => {
+    if (isSuccess) {
+      setTitle(post.title);
+      setContent(post.body);
+      setUserId(post.userId);
+    }
+  }, [isSuccess, post?.title, post?.body, post?.userId]);
+
+  if (isLoadingPosts) return <p>Loading...</p>;
 
   if (!post) {
     return (
@@ -41,33 +70,40 @@ const EditPostForm = () => {
   const onContentChanged = (e) => setContent(e.target.value);
   const onAuthorChanged = (e) => setUserId(Number(e.target.value));
 
-  const canSave =
-    [title, content, userId].every(Boolean) && !isLoading;
+  const canSave = [title, content, userId].every(Boolean) && !isLoading;
 
-    const onSavePostClicked = async () => {
-      if (canSave) {
-          try {
-              await updatePost({ id: post.id, title, body: content, userId }).unwrap()
+  const onSavePostClicked = async () => {
+    if (canSave) {
+      try {
+        await updatePost({
+          id: post?.id,
+          title,
+          body: content,
+          userId,
+        }).unwrap();
 
-              setTitle('')
-              setContent('')
-              setUserId('')
-              navigate(`/post/${postId}`)
-          } catch (err) {
-              console.error('Failed to save the post', err)
-          }
+        setTitle("");
+        setContent("");
+        setUserId("");
+        navigate(`/post/${postId}`);
+      } catch (err) {
+        console.error("Failed to save the post", err);
       }
-  }
+    }
+  };
 
-  const usersOptions = users.map((user) => (
-    <MenuItem key={user.id} value={user.id}>
-      {user.name}
-    </MenuItem>
-  ));
+  let usersOptions;
+  if (isSuccessUsers) {
+    usersOptions = users.ids.map((id) => (
+      <MenuItem key={id} value={id}>
+        {users.entities[id].name}
+      </MenuItem>
+    ));
+  }
 
   const onDeletePostClicked = async () => {
     try {
-      await deletePost({ id: post.id }).unwrap();
+      await deletePost({ id: post?.id }).unwrap();
 
       setTitle("");
       setContent("");
@@ -83,7 +119,7 @@ const EditPostForm = () => {
       variant="outlined"
       component="form"
       autoComplete="off"
-      sx={{ p: 2, mt: 2, borderRadius: 2, maxWidth: "100%", width: "100%",}}
+      sx={{ p: 2, mt: 2, borderRadius: 2, maxWidth: "100%", width: "100%" }}
     >
       <Typography variant="title" color="initial">
         Add Post
@@ -97,22 +133,22 @@ const EditPostForm = () => {
         sx={{ mt: 2 }}
       />
       <FormControl variant="filled" fullWidth sx={{ mt: 2 }}>
-        <InputLabel id="SelectUser" >
-        SelectUser
-      </InputLabel>
-      <Select
-        labelId="SelectUser"
-        fullWidth
-        id="SelectUser"
-        value={userId}
-        onChange={onAuthorChanged}
-        label="SelectUser"
-      >
-        {usersOptions}
-      </Select>
-        <FormHelperText>Select User to post on it's profile page</FormHelperText>
+        <InputLabel id="SelectUser">SelectUser</InputLabel>
+        <Select
+          labelId="SelectUser"
+          fullWidth
+          id="SelectUser"
+          value={userId}
+          onChange={onAuthorChanged}
+          label="SelectUser"
+        >
+          {usersOptions}
+        </Select>
+        <FormHelperText>
+          Select User to post on it's profile page
+        </FormHelperText>
       </FormControl>
-      
+
       <Input
         value={content}
         onChange={onContentChanged}

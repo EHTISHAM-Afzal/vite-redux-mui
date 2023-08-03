@@ -90,6 +90,7 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: (result, error, arg) => [{ type: "Post", id: arg.id }],
     }),
+
     deletePost: builder.mutation({
       query: ({ id }) => ({
         url: `/posts/${id}`,
@@ -98,39 +99,33 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: (result, error, arg) => [{ type: "Post", id: arg.id }],
     }),
-    
+
     addReaction: builder.mutation({
-      query: ({ postId, reactions }) => ({
-        url: `posts/${postId}`,
-        method: "PATCH",
-        // In a real app, we'd probably need to base this on user ID somehow
-        // so that a user can't do the same reaction more than once
-        body: { reactions },
-      }),
-      async onQueryStarted(
-        { postId, reactions },
-        { dispatch, queryFulfilled }
-      ) {
-        // `updateQueryData` requires the endpoint name and cache key arguments,
-        // so it knows which piece of cache state to update
-        const patchResult = dispatch(
-          extendedApiSlice.util.updateQueryData(
-            "getPosts",
-            undefined,
-            (draft) => {
-              // The `draft` is Immer-wrapped and can be "mutated" like in createSlice
-              const post = draft.entities[postId];
-              if (post) post.reactions = reactions;
+            query: ({ postId, reactions }) => ({
+                url: `posts/${postId}`,
+                method: 'PATCH',
+                // In a real app, we'd probably need to base this on user ID somehow
+                // so that a user can't do the same reaction more than once
+                body: { reactions }
+            }),
+            async onQueryStarted({ postId, reactions }, { dispatch, queryFulfilled }) {
+                // `updateQueryData` requires the endpoint name and cache key arguments,
+                // so it knows which piece of cache state to update
+                const patchResult = dispatch(
+                    // updateQueryData takes three arguments: the name of the endpoint to update, the same cache key value used to identify the specific cached data, and a callback that updates the cached data.
+                    extendedApiSlice.util.updateQueryData('getPosts', 'getPosts', draft => {
+                        // The `draft` is Immer-wrapped and can be "mutated" like in createSlice
+                        const post = draft.entities[postId]
+                        if (post) post.reactions = reactions
+                    })
+                )
+                try {
+                    await queryFulfilled
+                } catch {
+                    patchResult.undo()
+                }
             }
-          )
-        );
-        try {
-          await queryFulfilled;
-        } catch {
-          patchResult.undo();
-        }
-      },
-    }),
+        })
   }),
 });
 
@@ -143,21 +138,23 @@ export const {
   useAddReactionMutation,
 } = extendedApiSlice;
 
-// returns the query result object
-export const selectPostsResult = extendedApiSlice.endpoints.getPosts.select();
+// // returns the query result object
+// export const selectPostsResult = extendedApiSlice.endpoints.getPosts.select();
 
-// Creates memoized selector
-const selectPostsData = createSelector(
-  selectPostsResult,
-  (postsResult) => postsResult.data // normalized state object with ids & entities
-);
+// // Creates memoized selector
+// const selectPostsData = createSelector(
+//   selectPostsResult,
+//   (postsResult) => postsResult.data // normalized state object with ids & entities
+// );
 
-//getSelectors creates these selectors and we rename them with aliases using destructuring
-export const {
-  selectAll: selectAllPosts,
-  selectById: selectPostById,
-  selectIds: selectPostIds,
-  // Pass in a selector that returns the posts slice of state
-} = postsAdapter.getSelectors(
-  (state) => selectPostsData(state) ?? initialState
-);
+// //getSelectors creates these selectors and we rename them with aliases using destructuring
+// export const {
+//   selectAll: selectAllPosts,
+//   selectById: selectPostById,
+//   selectIds: selectPostIds,
+//   // Pass in a selector that returns the posts slice of state
+// } = postsAdapter.getSelectors(
+//   (state) => selectPostsData(state) ?? initialState
+// );
+
+

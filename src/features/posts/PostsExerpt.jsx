@@ -1,15 +1,19 @@
 import PostAuthor from "./postAuthor";
 import TimeAgo from "./TimeAgo";
 import ReactionButtons from "./ReactionButtons";
-import { Box, Card, CardContent, CardHeader, Stack, Typography,} from "@mui/material";
+import { Box, Card, CardContent, CardHeader, Typography } from "@mui/material";
 import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { selectPostById, } from "./postSclice";
+import { useGetPostsQuery } from "./postSclice";
+import React from "react";
 
-const PostsExcerpt = ({postId}) => {
+const PostsExcerpt = ({ postId }) => {
+
+    const { post } = useGetPostsQuery('getPosts', {
+      selectFromResult: ({ data }) => ({
+          post: data?.entities[postId]
+      }),
+  }) 
   
-  const post = useSelector(state => selectPostById(state, postId))
-
   return (
     <Card
       key={post.id}
@@ -25,7 +29,9 @@ const PostsExcerpt = ({postId}) => {
           {post.body.substring(0, 100)} ...
         </Typography>
         <Box variant="footer" color="text.secondary" sx={{ mt: 2 }}>
-        <Link className=" font-semibold " to={`post/${post.id}`}>View Post </Link>
+          <Link className=" font-semibold " to={`post/${post.id}`}>
+            View Post{" "}
+          </Link>
           <PostAuthor userId={post.userId} />
           <TimeAgo timestamp={post.date} />
         </Box>
@@ -34,4 +40,4 @@ const PostsExcerpt = ({postId}) => {
     </Card>
   );
 };
-export default PostsExcerpt;
+export default React.memo(PostsExcerpt);

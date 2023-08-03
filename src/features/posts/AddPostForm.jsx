@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import { useSelector } from "react-redux";
-import { selectAllUsers } from "../Users/usersSlice";
+import {  useGetUsersQuery } from "../Users/usersSlice";
 import { useAddNewPostMutation } from "./postSclice";
 import { useNavigate } from "react-router-dom";
 
@@ -23,7 +23,7 @@ const AddPostForm = () => {
   const [content, setContent] = useState("");
   const [userId, setUserId] = useState("");
 
-  const users = useSelector(selectAllUsers);
+  const { data: users, isSuccess, isError, error } = useGetUsersQuery();
 
   const onTitleChanged = (e) => setTitle(e.target.value);
   const onContentChanged = (e) => setContent(e.target.value);
@@ -46,11 +46,16 @@ const AddPostForm = () => {
     }
   };
 
-  const usersOptions = users.map((user) => (
-    <MenuItem key={user.id} value={user.id}>
-      {user.name}
-    </MenuItem>
-  ));
+
+  let usersOptions 
+  if(isSuccess){
+    usersOptions = users.ids.map((user) => (
+      <MenuItem key={user} value={user}>
+        {users.entities[user].name}
+      </MenuItem>
+    ));
+  }
+
 
   return (
     <Box sx={{ p: 2, mt: 2, border: "1px solid #ccc", borderRadius: 2 }}>

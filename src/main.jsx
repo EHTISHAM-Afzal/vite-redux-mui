@@ -7,11 +7,11 @@ import { Provider } from 'react-redux'
 import CssBaseline from '@mui/material/CssBaseline';
 import { ThemeProvider } from '@mui/material/styles';
 import theme from './theme.jsx'
-import { fetchUsers } from './features/Users/usersSlice.jsx'
 import { extendedApiSlice } from './features/posts/postSclice.jsx'
+import { usersApiSlice } from './features/Users/usersSlice.jsx'
 
 store.dispatch(extendedApiSlice.endpoints.getPosts.initiate());
-store.dispatch(fetchUsers());
+store.dispatch(usersApiSlice.endpoints.getUsers.initiate());
 
 
 

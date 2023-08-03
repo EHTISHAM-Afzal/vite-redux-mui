@@ -2,28 +2,26 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import {  selectPostIds } from "./postSclice";
-import { useSelector,  } from "react-redux";
 import PostsExcerpt from "./PostsExerpt";
 import Skeletons from "../../components/skeleton";
 import {useGetPostsQuery} from "./postSclice"
 const PostList = () => {
 
   const {
+    data : posts,
     isLoading,
     isSuccess,
     isError,
     error
-} = useGetPostsQuery()
+} = useGetPostsQuery('getPosts')
 
-  const orderedPostIds = useSelector(selectPostIds)
 
 
   let content;
   if (isLoading) {
     content = <Skeletons/>;
   } else if (isSuccess) {
-    content = orderedPostIds.map(postId => <PostsExcerpt key={postId} postId={postId} />)
+    content = posts.ids.map(postId => <PostsExcerpt key={postId} postId={postId} />);
     } else if (isError) {
       content = <Typography>{error}</Typography>;
     }

@@ -1,5 +1,5 @@
 import { Box, Button } from "@mui/material";
-import { useAddReactionMutation } from "./postSclice";
+import { useAddReactionMutation, useGetPostsQuery } from "./postSclice";
 
 const reactionEmoji = {
   thumbsUp: "👍",
@@ -22,7 +22,7 @@ const ReactionButtons = ({ post }) => {
         className="reactionButton"
         onClick={() => {
           const newValue = post.reactions[name] + 1
-          addReaction({ postId: post.id, reactions : { ...post.reactions , [name]: newValue }})
+          addReaction({ postId: post.id, reactions : { ...post.reactions , [name]: newValue }});
         }
         }
       >
